@@ -1,6 +1,6 @@
 <div align="center">  
   <a href="https://github.com/Cardroid/CensoringDPI">
-    <img alt="MahApps.Metro" width="200" heigth="200" src="https://github.com/Cardroid/CensoringDPI/blob/master/icon.png?raw=true">
+    <img alt="CensoringDPI" width="200" heigth="200" src="https://github.com/Cardroid/CensoringDPI/blob/master/icon.png?raw=true">
   </a>
   <h1>CensoringDPI</h1>
   <a href="https://github.com/Cardroid/CensoringDPI/releases/latest">
