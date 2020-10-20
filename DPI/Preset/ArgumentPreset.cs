@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GoodByeDPI.NET.Wrapper
+namespace GoodByeDPI.NET.Preset
 {
     public class ArgumentPreset
     {

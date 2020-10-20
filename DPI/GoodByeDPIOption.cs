@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GoodByeDPI.NET.Wrapper
+namespace GoodByeDPI.NET
 {
     public class GoodByeDPIOption
     {
@@ -32,12 +32,15 @@ namespace GoodByeDPI.NET.Wrapper
 
             Argument = ArgumentParser(Argument);
             if (!ArgumentList.ContainsKey(Argument))
-                ArgumentList.Add(Argument, "");
+                ArgumentList.Add(Argument, string.Empty);
         }
         
         public void AddArgument(string Argument, string value)
         {
             if (Lock) return;
+
+            if (string.IsNullOrWhiteSpace(value))
+                value = string.Empty;
 
             Argument = ArgumentParser(Argument);
             if (!ArgumentList.ContainsKey(Argument))

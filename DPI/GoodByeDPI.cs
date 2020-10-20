@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace GoodByeDPI.NET.Wrapper
+namespace GoodByeDPI.NET
 {
     public class GoodByeDPI
     {
@@ -28,16 +28,14 @@ namespace GoodByeDPI.NET.Wrapper
             };
         }
 
-        private static GoodByeDPI goodByeDPI;
+        private static GoodByeDPI Instence;
 
-        public static GoodByeDPI GetDPIProcess(string path)
+        public static GoodByeDPI GetInstence(string path)
         {
-            if (goodByeDPI == null)
-            {
-                goodByeDPI = new GoodByeDPI(path);
-            }
+            if (Instence == null)
+                Instence = new GoodByeDPI(path);
 
-            return goodByeDPI;
+            return Instence;
         }
 
         public string Path => DPI_Process.StartInfo.FileName;
@@ -50,6 +48,9 @@ namespace GoodByeDPI.NET.Wrapper
 
         public bool Start(GoodByeDPIOption option = null)
         {
+            if (IsRun || ProcessRunCheck())
+                return false;
+
             if (option == null)
             {
                 if (this.Option == null)
@@ -66,8 +67,9 @@ namespace GoodByeDPI.NET.Wrapper
 
         private bool Start(string arg)
         {
-            if (IsRun)
+            if (IsRun || ProcessRunCheck())
                 return false;
+
             IsRun = true;
 
             DPI_Process.StartInfo.Arguments = arg;
@@ -85,6 +87,12 @@ namespace GoodByeDPI.NET.Wrapper
             DPI_Process.Close();
             IsRun = false;
             return IsRun;
+        }
+
+        private bool ProcessRunCheck()
+        {
+            Process[] processes = Process.GetProcessesByName("goodbyedpi");
+            return processes.Length > 0;
         }
     }
 }
