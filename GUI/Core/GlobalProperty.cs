@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GUI.Core
+namespace GBDPIGUI.Core
 {
-    public class GlobalProperty
+    public class GlobalProperty : INotifyPropertyChanged
     {
         private GlobalProperty()
         {
@@ -20,5 +21,8 @@ namespace GUI.Core
                 Instence = new GlobalProperty();
             return Instence;
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

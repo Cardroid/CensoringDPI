@@ -1,5 +1,5 @@
 ﻿<Window
-    x:Class="GUI.MainWindow"
+    x:Class="GBDPIGUI.MainWindow"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     ui:WindowHelper.UseModernWindowStyle="True"
     ui:TitleBar.ExtendViewIntoTitleBar="True"
@@ -8,20 +8,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:vm="clr-namespace:GUI.ViewModel"
+    xmlns:view="clr-namespace:GBDPIGUI.View"
     mc:Ignorable="d"
     Title="CensoringDPI V2"
     Height="450"
     Width="800">
 
-    <Window.DataContext>
-        <vm:MainWindowViewModel />
-    </Window.DataContext>
-
-    <Grid>
-        <ui:NavigationView
-            ui:IsBackEnabled="False"
-            ui:IsBackButtonVisible="Collapsed"
-            MenuItemsSource="{Binding NavigationViewItems}" />
-    </Grid>
+    <view:MainView />
 </Window>

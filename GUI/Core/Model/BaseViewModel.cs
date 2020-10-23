@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace GUI.Core.Model
+namespace GBDPIGUI.Core.Model
 {
     public class BaseViewModel : INotifyPropertyChanged
     {

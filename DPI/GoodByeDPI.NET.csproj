@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>CarbonSIX</Authors>
     <Description>GoodByeDPI wrapper for Dotnet C#</Description>
     <Copyright>Copyright © CarbonSIX 2020</Copyright>

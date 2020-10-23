@@ -2,42 +2,49 @@
 using System.Collections.Generic;
 using System.Text;
 
+using GoodByeDPI.NET.Interface;
+
 namespace GoodByeDPI.NET
 {
-    public class GoodByeDPIOption
+    public class GoodByeDPIOptions : IGoodByeDPIOptions
     {
-        public GoodByeDPIOption()
+        public GoodByeDPIOptions(string path, bool isArgumentLock)
         {
             this.ArgumentList = new Dictionary<string, string>();
+            this.IsArgumentLock = isArgumentLock;
+            this.Path = path;
         }
 
-        public GoodByeDPIOption(params string[] Arguments) : this()
+        public GoodByeDPIOptions(string path, bool isArgumentLock, params string[] Arguments) : this(path, isArgumentLock)
         {
             for (int i = 0; i < Arguments.Length; i++)
                 AddArgument(Arguments[i]);
         }
 
-        public GoodByeDPIOption(GoodByeDPIOption option)
+        public GoodByeDPIOptions(GoodByeDPIOptions option)
         {
             this.ArgumentList = option.ArgumentList;
+            this.IsArgumentLock = option.IsArgumentLock;
+            this.Path = option.Path;
         }
 
         private Dictionary<string, string> ArgumentList { get; }
 
-        public bool Lock { get; set; }
+        public bool IsArgumentLock { get; }
+        public string Path { get; set; }
 
         public void AddArgument(string Argument)
         {
-            if (Lock) return;
+            if (IsArgumentLock) return;
 
             Argument = ArgumentParser(Argument);
             if (!ArgumentList.ContainsKey(Argument))
                 ArgumentList.Add(Argument, string.Empty);
         }
-        
+
         public void AddArgument(string Argument, string value)
         {
-            if (Lock) return;
+            if (IsArgumentLock) return;
 
             if (string.IsNullOrWhiteSpace(value))
                 value = string.Empty;
@@ -46,10 +53,10 @@ namespace GoodByeDPI.NET
             if (!ArgumentList.ContainsKey(Argument))
                 ArgumentList.Add(Argument, value);
         }
-        
+
         public bool RemoveArgument(string Argument)
         {
-            if (Lock) return false;
+            if (IsArgumentLock) return false;
 
             Argument = ArgumentParser(Argument);
             if (ArgumentList.ContainsKey(Argument))
@@ -71,7 +78,7 @@ namespace GoodByeDPI.NET
 
         public void Clear()
         {
-            if (Lock) return;
+            if (IsArgumentLock) return;
 
             ArgumentList.Clear();
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 
-using DPI.Wrapper;
+using GoodByeDPI.NET;
+using GoodByeDPI.NET.Preset;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,7 +13,7 @@ namespace UnitTest.GoodByeDPIOptionTest
         [TestMethod]
         public void ArgParser()
         {
-            GoodByeDPIOption option = new GoodByeDPIOption();
+            GoodByeDPIOptions option = new GoodByeDPIOptions("", false);
 
             option.AddArgument("-w");
             Assert.IsTrue(option.ContainsArgument("-w"), "Existence Test \"-w\"");
@@ -36,17 +37,17 @@ namespace UnitTest.GoodByeDPIOptionTest
             Assert.IsTrue(option.RemoveArgument("arg"), "Remove Test \"arg\"");
             Assert.IsTrue(option.RemoveArgument("ARG-TYPE"), "Remove Test \"arg-type\"");
         }
-        
+
         [TestMethod]
         public void ArgSpeedandClear()
         {
-            GoodByeDPIOption option = new GoodByeDPIOption();
+            GoodByeDPIOptions option = new GoodByeDPIOptions("", false);
 
             int max = 10000;
             for (int i = 0; i < max; i++)
                 option.AddArgument(i.ToString());
             Assert.IsTrue(option.Count == max, $"Speed Test \"value: {max}\"");
-            
+
             option.Clear();
             Assert.IsTrue(option.Count == 0, "Clear Test");
         }
@@ -54,16 +55,16 @@ namespace UnitTest.GoodByeDPIOptionTest
         [TestMethod]
         public void ArgPresetGetter()
         {
-            Assert.IsTrue(ArgumentPreset.GetPreset(PresetNum.Default).ContainsArgument("1"), "1");
-            Assert.IsTrue(ArgumentPreset.GetPreset(PresetNum.Compatible_Better_Speed_HTTPS).ContainsArgument("2"), "2");
-            Assert.IsTrue(ArgumentPreset.GetPreset(PresetNum.Better_Speed_HTTP_HTTPS).ContainsArgument("3"), "3");
-            Assert.IsTrue(ArgumentPreset.GetPreset(PresetNum.Best_Speed).ContainsArgument("4"), "4");
+            Assert.IsTrue(ArgumentPreset.GetPreset("", PresetNum.Default).ContainsArgument("1"), "1");
+            Assert.IsTrue(ArgumentPreset.GetPreset("", PresetNum.Compatible_Better_Speed_HTTPS).ContainsArgument("2"), "2");
+            Assert.IsTrue(ArgumentPreset.GetPreset("", PresetNum.Better_Speed_HTTP_HTTPS).ContainsArgument("3"), "3");
+            Assert.IsTrue(ArgumentPreset.GetPreset("", PresetNum.Best_Speed).ContainsArgument("4"), "4");
         }
 
         [TestMethod]
         public void ArgGetter()
         {
-            GoodByeDPIOption option = new GoodByeDPIOption();
+            GoodByeDPIOptions option = new GoodByeDPIOptions("", false);
 
             option.AddArgument("-w");
             option.AddArgument("hello");
