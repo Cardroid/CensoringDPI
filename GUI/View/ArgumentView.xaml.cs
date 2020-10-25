@@ -15,9 +15,9 @@ using System.Windows.Shapes;
 
 namespace GBDPIGUI.View
 {
-    public partial class OptionView : UserControl
+    public partial class ArgumentView : UserControl
     {
-        public OptionView()
+        public ArgumentView()
         {
             InitializeComponent();
         }

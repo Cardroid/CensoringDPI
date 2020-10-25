@@ -18,11 +18,16 @@
         <ui:NavigationView
             x:FieldModifier="private"
             x:Name="MainNavigationView"
+            IsPaneToggleButtonVisible="False"
+            IsPaneOpen="False"
+            PaneDisplayMode="LeftCompact"
+            IsSettingsVisible="False"
             MenuItemsSource="{Binding NavigationViewItems}">
 
             <ui:Frame
                 x:FieldModifier="private"
-                x:Name="MainFrame" />
+                x:Name="MainFrame"
+                Margin="10,0,0,0" />
         </ui:NavigationView>
     </Grid>
 </UserControl>

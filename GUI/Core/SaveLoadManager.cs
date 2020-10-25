@@ -35,10 +35,10 @@ namespace GBDPIGUI.Core
                     return false;
                 }
             }
-         
+
             if (string.IsNullOrWhiteSpace(json))
                 return false;
-            
+
             File.WriteAllText(path, json, Encoding.UTF8);
             return true;
         }

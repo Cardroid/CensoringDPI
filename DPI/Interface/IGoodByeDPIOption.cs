@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace GoodByeDPI.NET.Interface
+﻿namespace GoodByeDPIDotNet.Interface
 {
     public interface IGoodByeDPIOptions
     {
         string Path { get; }
+        bool IsAdmin { get; }
         string GetArgument();
     }
 }

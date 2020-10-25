@@ -15,8 +15,8 @@
     </UserControl.DataContext>
 
     <Grid>
-        <TextBlock
-            Text="메뉴얼"
-            FontSize="80" />
+        <Label
+            Content="메뉴얼"
+            FontSize="20" />
     </Grid>
 </UserControl>

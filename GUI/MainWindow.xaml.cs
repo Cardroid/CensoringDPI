@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using GBDPIGUI.Core;
+
 namespace GBDPIGUI
 {
     public partial class MainWindow : Window
@@ -20,6 +22,19 @@ namespace GBDPIGUI
         public MainWindow()
         {
             InitializeComponent();
+            this.MouseUp += (s, e) =>
+            {
+                if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Released)
+                    Keyboard.ClearFocus();
+            };
+
+            #region TestCode
+#if DEBUG
+            var gP = GlobalProperty.GetInstence();
+
+            gP.GoodByeDPIOptions.Path = @"DPIEXE\goodbyedpi.exe";
+#endif
+            #endregion
         }
     }
 }

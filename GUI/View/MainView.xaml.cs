@@ -19,9 +19,6 @@ using ModernWpf.Controls;
 
 namespace GBDPIGUI.View
 {
-    /// <summary>
-    /// Main.xaml에 대한 상호 작용 논리
-    /// </summary>
     public partial class MainView : UserControl
     {
         public MainView()
@@ -37,7 +34,7 @@ namespace GBDPIGUI.View
             this.MainNavigationView.SelectedItem = viewModel.NavigationViewItems.FirstOrDefault();
         }
 
-        private void MainNavigationView_SelectionChanged(ModernWpf.Controls.NavigationView sender, ModernWpf.Controls.NavigationViewSelectionChangedEventArgs args)
+        private void MainNavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.IsSettingsSelected)
                 this.MainFrame.Content = new OptionView();

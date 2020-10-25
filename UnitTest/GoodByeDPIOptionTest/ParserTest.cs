@@ -1,7 +1,7 @@
 ﻿using System;
 
-using GoodByeDPI.NET;
-using GoodByeDPI.NET.Preset;
+using GoodByeDPIDotNet.NET;
+using GoodByeDPIDotNet.NET.Preset;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

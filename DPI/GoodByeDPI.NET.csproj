@@ -5,6 +5,7 @@
     <Authors>CarbonSIX</Authors>
     <Description>GoodByeDPI wrapper for Dotnet C#</Description>
     <Copyright>Copyright © CarbonSIX 2020</Copyright>
+    <RootNamespace>GoodByeDPIDotNet</RootNamespace>
   </PropertyGroup>
 
 </Project>

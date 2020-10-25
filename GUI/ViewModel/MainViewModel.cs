@@ -17,14 +17,13 @@ namespace GBDPIGUI.ViewModel
         {
             NavigationViewItems = new List<NavigationViewItem>
             {
-                new NavigationViewItem { Content = "일반", Tag = GeneralView, Icon = new SymbolIcon(Symbol.Play) },
-                new NavigationViewItem { Content = "메뉴얼", Tag = ManualView, Icon = new SymbolIcon(Symbol.Message) },
+                new NavigationViewItem { Content = "일반", Tag = new GeneralView(), Icon = new SymbolIcon(Symbol.Play) },
+                new NavigationViewItem { Content = "메뉴얼", Tag = new ManualView(), Icon = new SymbolIcon(Symbol.Message) },
+                new NavigationViewItem { Content = "인수 설정", Tag = new ArgumentView(), Icon = new SymbolIcon(Symbol.Edit) },
+                new NavigationViewItem { Content = "설정", Tag = new OptionView(), Icon = new SymbolIcon(Symbol.Setting) },
             };
         }
 
         public List<NavigationViewItem> NavigationViewItems { get; }
-        private GeneralView GeneralView { get; } = new GeneralView();
-        private ManualView ManualView { get; } = new ManualView();
-        private OptionView OptionView { get; } = new OptionView();
     }
 }

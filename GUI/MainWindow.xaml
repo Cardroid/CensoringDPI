@@ -11,8 +11,8 @@
     xmlns:view="clr-namespace:GBDPIGUI.View"
     mc:Ignorable="d"
     Title="CensoringDPI V2"
-    Height="450"
-    Width="800">
+    Height="600"
+    Width="1290">
 
     <view:MainView />
 </Window>

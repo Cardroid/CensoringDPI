@@ -5,9 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using Newtonsoft.Json;
+
 namespace GBDPIGUI.Core
 {
-    public class HotKey
+    [JsonObject(MemberSerialization.OptIn)]
+    public class HotKey : ISaveLoadable
     {
         public HotKey(Key key, ModifierKeys modifiers)
         {
@@ -15,9 +18,29 @@ namespace GBDPIGUI.Core
             Modifiers = modifiers;
         }
 
-        public Key Key { get; }
+        [JsonProperty]
+        public Key Key { get; private set; }
 
-        public ModifierKeys Modifiers { get; }
+        [JsonProperty]
+        public ModifierKeys Modifiers { get; private set; }
+
+        public string Save() => JsonConvert.SerializeObject(this);
+
+        public bool Load(string json)
+        {
+            try
+            {
+                var loadedObj = (HotKey)JsonConvert.DeserializeObject(json);
+
+                this.Key = loadedObj.Key;
+                this.Modifiers = loadedObj.Modifiers;
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
 
         public override string ToString()
         {

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace GoodByeDPI.NET.Manual
+namespace GoodByeDPIDotNet.Manual
 {
     public class ArgumentManual
     {
@@ -34,15 +32,30 @@ namespace GoodByeDPI.NET.Manual
                 argsManual.Add("--blacklist [txtfile]", "호스트 이름 및 하위 도메인에 대해서만 HTTP 트릭 수행, 텍스트 파일로 입력가능 (이 옵션은 여러 번 사용할 수 있음)");
                 argsManual.Add("--set-ttl [value]", "Fake Request Mode를 활성화하고 제공된 TTL[value]으로 보냅니다. [위험! 예기치 않은 방식으로 웹 사이트를 손상시킬 수 있습니다. 주의해서 사용하십시오]");
                 argsManual.Add("--wrong-chksum", "Fake Request Mode를 활성화하고 잘못된 TCP 체크섬과 함께 출력, VM 또는 일부 라우터에서는 작동하지 않을 수 있지만 --set-ttl보다 안전합니다.");
-                argsManual.Add("-1", "(-p -r -s -f 2 -k 2 -n -e 2) 가장 호환성 높은 방식, 가장 느림 (기본값)");
-                argsManual.Add("-2", "(-p -r -s -f 2 -k 2 -n -e 40) HTTPS의 속도가 더 빠르지만 여전히 호환성 높음");
-                argsManual.Add("-3", "(-p -r -s -e 40) HTTPS 속도가 더 빠르며, HTTP 파편화를 진행하지 않음");
-                argsManual.Add("-4", "(-p -r -s) 가장 빠름");
 
                 ArgsManual = argsManual;
             }
 
             return ArgsManual;
+        }
+
+        private static IReadOnlyDictionary<string, string> PresetsManual;
+
+        public static IReadOnlyDictionary<string, string> GetPresetManual()
+        {
+            if (PresetsManual == null)
+            {
+                Dictionary<string, string> presetsManual = new Dictionary<string, string>();
+
+                presetsManual.Add("-1", "(-p -r -s -f 2 -k 2 -n -e 2) 가장 호환성 높은 방식, 가장 느림 (기본값)");
+                presetsManual.Add("-2", "(-p -r -s -f 2 -k 2 -n -e 40) HTTPS의 속도가 더 빠르지만 여전히 호환성 높음");
+                presetsManual.Add("-3", "(-p -r -s -e 40) HTTPS 속도가 더 빠르며, HTTP 파편화를 진행하지 않음");
+                presetsManual.Add("-4", "(-p -r -s) 가장 빠름");
+
+                PresetsManual = presetsManual;
+            }
+
+            return PresetsManual;
         }
     }
 }

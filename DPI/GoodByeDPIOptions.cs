@@ -1,21 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-using GoodByeDPI.NET.Interface;
+using GoodByeDPIDotNet.Interface;
 
-namespace GoodByeDPI.NET
+namespace GoodByeDPIDotNet
 {
     public class GoodByeDPIOptions : IGoodByeDPIOptions
     {
-        public GoodByeDPIOptions(string path, bool isArgumentLock)
+        public GoodByeDPIOptions()
+        {
+            this.ArgumentList = new Dictionary<string, string>();
+            this.IsArgumentLock = false;
+            this.IsAdmin = false;
+        }
+
+        public GoodByeDPIOptions(string path, bool isAdmin, bool isArgumentLock)
         {
             this.ArgumentList = new Dictionary<string, string>();
             this.IsArgumentLock = isArgumentLock;
             this.Path = path;
+            this.IsAdmin = isAdmin;
         }
 
-        public GoodByeDPIOptions(string path, bool isArgumentLock, params string[] Arguments) : this(path, isArgumentLock)
+        public GoodByeDPIOptions(string path, bool isAdmin, bool isArgumentLock, params string[] Arguments) : this(path, isAdmin, isArgumentLock)
         {
             for (int i = 0; i < Arguments.Length; i++)
                 AddArgument(Arguments[i]);
@@ -26,12 +32,26 @@ namespace GoodByeDPI.NET
             this.ArgumentList = option.ArgumentList;
             this.IsArgumentLock = option.IsArgumentLock;
             this.Path = option.Path;
+            this.IsAdmin = option.IsAdmin;
         }
 
         private Dictionary<string, string> ArgumentList { get; }
 
         public bool IsArgumentLock { get; }
-        public string Path { get; set; }
+        public bool IsAdmin { get; set; }
+
+        private string _Path = "goodbyedpi.exe";
+        public string Path
+        {
+            get => _Path;
+            set
+            {
+                if (!value.EndsWith(".exe"))
+                    _Path = $"{value}.exe";
+                else
+                    _Path = value;
+            }
+        }
 
         public void AddArgument(string Argument)
         {
@@ -92,7 +112,7 @@ namespace GoodByeDPI.NET
                 if (!string.IsNullOrEmpty(result))
                     result += " ";
                 result += $"{item.Key}";
-                if (!string.IsNullOrWhiteSpace(item.Value))
+                if (!string.IsNullOrEmpty(item.Value))
                     result += $" \"{item.Value}\"";
             }
 
@@ -107,7 +127,7 @@ namespace GoodByeDPI.NET
             Argument = Argument.ToLower();
             string oriArgument = Argument;
 
-            // "-" 제거
+            // "-", "--" 제거
             int i;
             for (i = 0; i < Argument.Length; i++)
             {
