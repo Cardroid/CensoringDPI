@@ -3,17 +3,18 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 using GoodByeDPIDotNet.Core;
 using GoodByeDPIDotNet.Interface;
 
 namespace GoodByeDPIDotNet
 {
-    public class GoodByeDPI
+    public sealed class GoodByeDPI : INotifyPropertyChanged
     {
         private GoodByeDPI()
         {
-            this.IsRun = GoodByeDPIManager.GoodByeDPIRunCheck();
         }
 
         private static GoodByeDPI Instence;
@@ -25,16 +26,15 @@ namespace GoodByeDPIDotNet
             return Instence;
         }
 
-        private void Init(string path, bool isAdmin)
+        private void Setup(string path, bool isAdmin)
         {
             ProcessStartInfo startInfo;
+            Process process;
 
             if (isAdmin)
                 startInfo = new ProcessStartInfo(path)
                 {
                     UseShellExecute = false,
-                    StandardErrorEncoding = Encoding.UTF8,
-                    StandardOutputEncoding = Encoding.UTF8,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
@@ -47,53 +47,116 @@ namespace GoodByeDPIDotNet
                     WindowStyle = ProcessWindowStyle.Hidden
                 };
 
-            GBDPI_Process = new Process
+            process = new Process
             {
+                EnableRaisingEvents = true,
                 StartInfo = startInfo
             };
+
+            Dispose();
+            GBDPI_Process = process;
+
+            GBDPI_Process.Exited += ExitWatcher;
         }
 
         private Process GBDPI_Process;
 
-        public event EventHandler<GoodByeDPIEventArgs> GoodByeDPIEvent;
-        public bool IsRun { get; private set; }
+        private string _Path;
+        public string Path
+        {
+            get => _Path;
+            private set
+            {
+                _Path = value;
+                OnPropertyChanged("Path");
+            }
+        }
+
+        private bool _IsAdmin;
+        public bool IsAdmin
+        {
+            get => _IsAdmin;
+            private set
+            {
+                _IsAdmin = value;
+                OnPropertyChanged("IsAdmin");
+            }
+        }
+
+        private bool _IsRun = false;
+        public bool IsRun
+        {
+            get => _IsRun && GBDPI_Process != null;
+            private set
+            {
+                if (GBDPI_Process == null)
+                    _IsRun = false;
+                else
+                    _IsRun = value;
+                OnPropertyChanged("IsRun");
+            }
+        }
+
+        private void ExitWatcher(object sender, EventArgs args) => Dispose();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         public IGoodByeDPIOptions Options { get; private set; }
+
+        public GenericResult<string> Start() => Start(Options);
 
         public GenericResult<string> Start(IGoodByeDPIOptions options)
         {
-            if (IsRun || GoodByeDPIManager.GoodByeDPIRunCheck())
+            if (IsRun)
                 return new GenericResult<string>(false, "이미 실행 중입니다.");
 
+            if (Checker.GoodByeDPIRunCheck())
+                return new GenericResult<string>(false, "프로세스가 이미 존재합니다.");
+
             if (options == null)
-            {
-                if (this.Options == null)
-                    return Start(options.Path, "", options.IsAdmin);
-                else
-                    return Start(options.Path, Options.GetArgument(), options.IsAdmin);
-            }
-            else
-            {
-                this.Options = options;
-                return Start(options.Path, options.GetArgument(), options.IsAdmin);
-            }
+                return new GenericResult<string>(false, "유효한 설정값이 아닙니다.");
+
+            if (Options != options)
+                Options = options;
+
+            return Start(options.Path, options.GetArgument(), options.IsAdmin);
         }
 
         public GenericResult<string> Start(string path, string arg, bool isAdmin)
         {
-            if (IsRun || GoodByeDPIManager.GoodByeDPIRunCheck())
+            if (IsRun)
                 return new GenericResult<string>(false, "이미 실행 중입니다.");
 
-            if (!Path.GetExtension(path.ToLower()).EndsWith("exe") || !File.Exists(path))
+            if (Checker.GoodByeDPIRunCheck())
+                return new GenericResult<string>(false, "프로세스가 이미 존재합니다.");
+
+            try
             {
-                GBDPI_Process = null;
-                IsRun = GoodByeDPIManager.GoodByeDPIRunCheck();
-                return new GenericResult<string>(IsRun, $"유효한 경로가 아닙니다.\n{path}");
+                path = System.IO.Path.GetFullPath(path);
+                if (!System.IO.Path.GetExtension(path).EndsWith("exe") || !File.Exists(path))
+                    throw new ArgumentException();
             }
-            else
+            catch
             {
-                if (GBDPI_Process == null)
-                    Init(path, isAdmin);
+                Dispose();
+                return new GenericResult<string>(false, $"유효한 경로가 아닙니다.\n{path}");
             }
+
+            if (Path != path)
+            {
+                Dispose();
+                Path = path;
+            }
+
+            if (IsAdmin != isAdmin)
+            {
+                Dispose();
+                IsAdmin = isAdmin;
+            }
+
+            if (GBDPI_Process == null)
+                Setup(Path, IsAdmin);
 
             try
             {
@@ -101,21 +164,20 @@ namespace GoodByeDPIDotNet
                     GBDPI_Process.StartInfo.Arguments = arg;
                 else
                     arg = "Null";
-                GBDPI_Process.Start();
+                Run();
             }
             catch (Win32Exception e)
             {
-                Kill();
-                return new GenericResult<string>(IsRun, $"인수: {arg}\n{e.Message}");
+                Dispose();
+                return new GenericResult<string>(false, $"인수: {arg}\n{e.Message}");
             }
             catch (Exception e)
             {
-                Kill();
-                return new GenericResult<string>(IsRun, $"인수: {arg}\n예외 발생: {e}");
+                Dispose();
+                return new GenericResult<string>(false, $"인수: {arg}\n예외 발생: {e}");
             }
 
-            IsRun = GoodByeDPIManager.GoodByeDPIRunCheck();
-            return new GenericResult<string>(IsRun, $"프로세스를 시작하였습니다.\n인수: {arg}");
+            return new GenericResult<string>(true, $"프로세스를 시작하였습니다.\n인수: {arg}");
         }
 
         public GenericResult<string> Stop()
@@ -123,35 +185,38 @@ namespace GoodByeDPIDotNet
             if (!IsRun)
                 return new GenericResult<string>(false, "실행 중인 프로세스가 없습니다.");
 
-            try
-            {
-                if (GBDPI_Process != null)
-                    GBDPI_Process.Kill();
-                IsRun = false;
-            }
-            catch (Exception e)
-            {
-                Kill();
-                return new GenericResult<string>(false, $"프로세스 종료를 실패했습니다.\n예외 발생: {e}");
-            }
-     
+            Dispose();
             return new GenericResult<string>(true, "프로세스를 종료했습니다.");
         }
 
-        private void Kill()
+        private void Run()
         {
-            if (GoodByeDPIManager.GoodByeDPIRunCheck())
+            try
+            {
+                GBDPI_Process.Start();
+                IsRun = true;
+            }
+            catch
+            {
+                Dispose();
+                throw;
+            }
+        }
+
+        public void Kill()
+        {
+            if (GBDPI_Process != null)
                 try { GBDPI_Process.Kill(); } catch { }
             IsRun = false;
         }
 
-        private async void ProcessWatcher()
+        public void Dispose()
         {
-            while (IsRun)
-            {
+            Kill();
 
-            }
-            GoodByeDPIEvent?.Invoke();
+            if (GBDPI_Process != null)
+                GBDPI_Process.Dispose();
+            GBDPI_Process = null;
         }
     }
 }

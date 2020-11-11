@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
+using GoodByeDPIDotNet.Core;
 using GoodByeDPIDotNet.Interface;
+using GoodByeDPIDotNet.Manual;
 
 namespace GoodByeDPIDotNet
 {
@@ -9,35 +13,33 @@ namespace GoodByeDPIDotNet
         public GoodByeDPIOptions()
         {
             this.ArgumentList = new Dictionary<string, string>();
-            this.IsArgumentLock = false;
             this.IsAdmin = false;
+            this.IsPreset = false;
         }
 
-        public GoodByeDPIOptions(string path, bool isAdmin, bool isArgumentLock)
+        public GoodByeDPIOptions(string path, bool isAdmin)
         {
             this.ArgumentList = new Dictionary<string, string>();
-            this.IsArgumentLock = isArgumentLock;
             this.Path = path;
             this.IsAdmin = isAdmin;
-        }
-
-        public GoodByeDPIOptions(string path, bool isAdmin, bool isArgumentLock, params string[] Arguments) : this(path, isAdmin, isArgumentLock)
-        {
-            for (int i = 0; i < Arguments.Length; i++)
-                AddArgument(Arguments[i]);
+            this.IsPreset = false;
         }
 
         public GoodByeDPIOptions(GoodByeDPIOptions option)
         {
             this.ArgumentList = option.ArgumentList;
-            this.IsArgumentLock = option.IsArgumentLock;
             this.Path = option.Path;
             this.IsAdmin = option.IsAdmin;
+            this.IsPreset = option.IsPreset;
         }
 
         private Dictionary<string, string> ArgumentList { get; }
 
-        public bool IsArgumentLock { get; }
+        public event EventHandler<ArgumentChangedEventArgs> ArgumentChangedEvent;
+        private void OnArgumentChanged(bool isAdded, string argument, string value) => ArgumentChangedEvent?.Invoke(this, new ArgumentChangedEventArgs(isAdded, argument, value, IsPreset));
+        private void OnArgumentChanged(bool isCleared) => ArgumentChangedEvent?.Invoke(this, new ArgumentChangedEventArgs(isCleared, IsPreset));
+
+        public bool IsForceArgumentCheck { get; set; } = true;
         public bool IsAdmin { get; set; }
 
         private string _Path = "goodbyedpi.exe";
@@ -53,103 +55,121 @@ namespace GoodByeDPIDotNet
             }
         }
 
-        public void AddArgument(string Argument)
+        private bool _IsPreset;
+        public bool IsPreset
         {
-            if (IsArgumentLock) return;
-
-            Argument = ArgumentParser(Argument);
-            if (!ArgumentList.ContainsKey(Argument))
-                ArgumentList.Add(Argument, string.Empty);
-        }
-
-        public void AddArgument(string Argument, string value)
-        {
-            if (IsArgumentLock) return;
-
-            if (string.IsNullOrWhiteSpace(value))
-                value = string.Empty;
-
-            Argument = ArgumentParser(Argument);
-            if (!ArgumentList.ContainsKey(Argument))
-                ArgumentList.Add(Argument, value);
-        }
-
-        public bool RemoveArgument(string Argument)
-        {
-            if (IsArgumentLock) return false;
-
-            Argument = ArgumentParser(Argument);
-            if (ArgumentList.ContainsKey(Argument))
+            get => _IsPreset;
+            set
             {
-                ArgumentList.Remove(Argument);
+                if (_IsPreset != value)
+                {
+                    _IsPreset = value;
+                    OnArgumentChanged(false);
+                }
+            }
+        }
+
+        public void AddArgument(string argument) => AddArgument(argument, string.Empty);
+
+        public void AddArgument(string argument, string value)
+        {
+            if (IsPreset) return;
+
+            argument = ArgumentParser(argument);
+            if (string.IsNullOrEmpty(argument))
+                return;
+
+            ArgumentList[argument] = value;
+            OnArgumentChanged(true, argument, value);
+        }
+
+        public bool RemoveArgument(string argument)
+        {
+            if (IsPreset) return false;
+
+            argument = ArgumentParser(argument);
+            if (ArgumentList.ContainsKey(argument))
+            {
+                string value = ArgumentList[argument];
+                ArgumentList.Remove(argument);
+                OnArgumentChanged(false, argument, value);
                 return true;
             }
             else
                 return false;
         }
 
-        public bool ContainsArgument(string Argument)
+        public bool ContainsArgument(string arg) => ArgumentList.ContainsKey(ArgumentParser(arg));
+        public string GetArgumentValue(string arg)
         {
-            Argument = ArgumentParser(Argument);
-            return ArgumentList.ContainsKey(ArgumentParser(Argument));
+            if (ArgumentList.TryGetValue(ArgumentParser(arg), out string value))
+                return value;
+            else
+                return string.Empty;
         }
 
         public int Count => ArgumentList.Count;
 
         public void Clear()
         {
-            if (IsArgumentLock) return;
-
             ArgumentList.Clear();
+            _IsPreset = false;
+            OnArgumentChanged(true);
         }
 
         public string GetArgument()
         {
-            string result = string.Empty;
+            StringBuilder result = new StringBuilder();
 
             foreach (var item in ArgumentList)
             {
-                if (!string.IsNullOrEmpty(result))
-                    result += " ";
-                result += $"{item.Key}";
+                if (result.Length != 0)
+                    result.Append(" ");
+
+                result.Append($"{item.Key}");
+
                 if (!string.IsNullOrEmpty(item.Value))
-                    result += $" \"{item.Value}\"";
+                    result.Append($" \"{item.Value}\"");
             }
 
-            return result;
+            return result.ToString();
         }
 
-        private static string ArgumentParser(string Argument)
+        private string ArgumentParser(string argument)
         {
-            if (string.IsNullOrWhiteSpace(Argument))
+            argument = argument.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(argument))
                 return string.Empty;
 
-            Argument = Argument.ToLower();
-            string oriArgument = Argument;
+            string result;
 
             // "-", "--" 제거
-            int i;
-            for (i = 0; i < Argument.Length; i++)
+            for (int i = 0; i < argument.Length; i++)
             {
-                if (Argument.StartsWith("-"))
-                    Argument = Argument.Substring(1, Argument.Length - 1);
+                if (argument.StartsWith("-"))
+                    argument = argument.Substring(1, argument.Length - 1);
                 else
-                {
-                    i--;
                     break;
-                }
             }
 
-            if (oriArgument.Length - Argument.Length - i == 0)
-                return oriArgument;
+            if (argument.Length > 1)
+                result = $"--{argument}";
             else
+                result = $"-{argument}";
+
+            // 인수 사전을 통해 검사
+            if (IsForceArgumentCheck)
             {
-                // "-" 추가
-                if (Argument.Length > 1)
-                    return $"--{Argument}";
-                else
-                    return $"-{Argument}";
+                foreach (var arg in ArgumentManual.GetArgumentManual().Keys)
+                {
+                    if (arg == result)
+                        return arg;
+                }
             }
+            else
+                return result;
+
+            return string.Empty;
         }
     }
 }

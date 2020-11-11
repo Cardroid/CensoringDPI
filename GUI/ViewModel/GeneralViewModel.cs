@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using GBDPIGUI.Core;
 using GBDPIGUI.Core.Model;
+using GBDPIGUI.View;
 
 namespace GBDPIGUI.ViewModel
 {
@@ -43,5 +44,11 @@ namespace GBDPIGUI.ViewModel
             }
         }
         #endregion
+
+        public bool IsTrayIconEnabled
+        {
+            get => TrayIcon.GetTrayIcon().IsIconEnabled;
+            set => TrayIcon.GetTrayIcon().IsIconEnabled = value;
+        }
     }
 }

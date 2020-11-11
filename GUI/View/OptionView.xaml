@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:vm="clr-namespace:GBDPIGUI.ViewModel"
     mc:Ignorable="d"
     d:DesignHeight="450"
@@ -14,9 +14,12 @@
         <vm:OptionViewModel />
     </UserControl.DataContext>
 
-    <Grid>
-        <Label
-            Content="설정"
-            FontSize="20" />
-    </Grid>
+    <hc:ScrollViewer
+        HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Label
+                Content="설정"
+                FontSize="20" />
+        </Grid>
+    </hc:ScrollViewer>
 </UserControl>

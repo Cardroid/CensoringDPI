@@ -4,8 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:vm="clr-namespace:GBDPIGUI.ViewModel"
+    IsEnabled="{Binding IsEditEnabled}"
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800">
@@ -19,23 +20,36 @@
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
+                Height="Auto" />
+            <RowDefinition
                 Height="*" />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition
-                Width="*" />
-        </Grid.ColumnDefinitions>
 
-        <ui:ToggleSwitch
-            OnContent="프리셋 모드"
-            OffContent="수동 모드"
-            IsOn="{Binding IsPresetMode}"
-            Grid.Column="0"
-            Grid.Row="0" />
-
-        <ui:ListView
-            ItemsSource="{Binding ViewItems}"
-            Grid.Column="0"
+        <StackPanel
+            Margin="5"
+            Grid.Row="0">
+            <hc:ComboBox
+                SelectedIndex="{Binding SelectPresetIndex}"
+                ItemsSource="{Binding PresetList}"
+                IsEnabled="{Binding IsPresetComboBoxEnabled}" />
+            <TextBlock
+                Style="{StaticResource TextBlockDefaultInfo}"
+                Text="{Binding PresetDescript}"
+                Margin="0,5,0,0" />
+        </StackPanel>
+        
+        <hc:Divider
+            Margin="0"
+            HorizontalContentAlignment="Left"
+            LineStroke="{DynamicResource DarkPrimaryBrush}"
+            Content="Argument"
             Grid.Row="1" />
+
+        <hc:ScrollViewer
+            HorizontalScrollBarVisibility="Visible"
+            Grid.Row="2">
+            <UserControl
+                Content="{Binding ArgumentViewItems}" />
+        </hc:ScrollViewer>
     </Grid>
 </UserControl>

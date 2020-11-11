@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,13 +12,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using GBDPIGUI.Core;
+using GBDPIGUI.Utility;
+using GBDPIGUI.View;
+
+using HandyControl.Controls;
 
 namespace GBDPIGUI
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : HandyControl.Controls.Window
     {
         public MainWindow()
         {
@@ -28,13 +32,33 @@ namespace GBDPIGUI
                     Keyboard.ClearFocus();
             };
 
-            #region TestCode
+            this.Loaded += (s, e) => Load();
+            Application.Current.Exit += (s, e) => Save();
+            if (Checker.IsAdministrator()) this.Title = $"[Admin] {this.Title}";
+
 #if DEBUG
+            #region TestCode
             var gP = GlobalProperty.GetInstence();
 
             gP.GoodByeDPIOptions.Path = @"DPIEXE\goodbyedpi.exe";
-#endif
+
+            GlobalProperty.GetInstence().Skin = HandyControl.Data.SkinType.Default;
             #endregion
+#endif
+        }
+
+        private const string directory = @"Save";
+
+        private void Save()
+        {
+            SaveLoadManager.Save(Path.Combine(directory, "Option.json"), GlobalProperty.GetInstence());
+            SaveLoadManager.Save(Path.Combine(directory, "Argument.json"), GlobalProperty.GetInstence().GoodByeDPIOptionsHelper);
+        }
+
+        private void Load()
+        {
+            SaveLoadManager.Load(Path.Combine(directory, "Option.json"), GlobalProperty.GetInstence());
+            SaveLoadManager.Load(Path.Combine(directory, "Argument.json"), GlobalProperty.GetInstence().GoodByeDPIOptionsHelper);
         }
     }
 }

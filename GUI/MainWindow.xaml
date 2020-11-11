@@ -1,18 +1,19 @@
-﻿<Window
+﻿<hc:Window
     x:Class="GBDPIGUI.MainWindow"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    ui:WindowHelper.UseModernWindowStyle="True"
-    ui:TitleBar.ExtendViewIntoTitleBar="True"
-    ui:ThemeManager.IsThemeAware="True"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:view="clr-namespace:GBDPIGUI.View"
     mc:Ignorable="d"
     Title="CensoringDPI V2"
     Height="600"
-    Width="1290">
+    Width="400">
 
-    <view:MainView />
-</Window>
+    <Grid>
+        <view:TrayIcon
+            x:Name="_Tray" />
+        <view:MainView />
+    </Grid>
+</hc:Window>

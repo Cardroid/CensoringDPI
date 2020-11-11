@@ -39,6 +39,10 @@ namespace GBDPIGUI.Core
             if (string.IsNullOrWhiteSpace(json))
                 return false;
 
+            string directory = Path.GetDirectoryName(path);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
             File.WriteAllText(path, json, Encoding.UTF8);
             return true;
         }

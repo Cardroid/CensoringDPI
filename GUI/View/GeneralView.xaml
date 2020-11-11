@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:vm="clr-namespace:GBDPIGUI.ViewModel"
     mc:Ignorable="d"
     d:DesignHeight="450"
@@ -14,29 +14,50 @@
         <vm:GeneralViewModel />
     </UserControl.DataContext>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition
-                Height="Auto" />
-            <RowDefinition
-                Height="Auto" />
-            <RowDefinition
-                Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        
-        <Label
-            Content="일반"
-            FontSize="20"
-            Grid.Row="0" />
-        <ToggleButton
-            Content="실행"
-            IsChecked="{Binding IsExecuteGoodByeDPI}"
-            MinWidth="100"
-            MinHeight="30"
-            Grid.Row="1" />
-        <Label
-            Content="{Binding Status}"
-            Grid.Row="3" />
-    </Grid>
+    <hc:ScrollViewer
+        HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition
+                    Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Grid.Row="1">
+                <ToggleButton
+                    Style="{StaticResource ToggleButtonSwitch}"
+                    IsChecked="{Binding IsExecuteGoodByeDPI}" />
+                <Label
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Content="실행" />
+            </StackPanel>
+
+            <StackPanel
+                Orientation="Horizontal"
+                HorizontalAlignment="Center"
+                Grid.Row="2">
+                <ToggleButton
+                    Style="{StaticResource ToggleButtonSwitch}"
+                    IsChecked="{Binding IsTrayIconEnabled}" />
+                <Label
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Content="트레이 아이콘 테스트" />
+            </StackPanel>
+            
+            <Label
+                Content="{Binding Status}"
+                Grid.Row="3" />
+        </Grid>
+    </hc:ScrollViewer>
 </UserControl>
