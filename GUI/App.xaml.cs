@@ -19,7 +19,7 @@ namespace GBDPIGUI
     {
         public App()
         {
-            if (!Checker.IsAdministrator() && !(Process.GetProcessesByName("CensoringDPI").Length > 2))
+            if (!Check.IsAdministrator() && !(Process.GetProcessesByName("CensoringDPI").Length > 2))
             {
                 Process.Start(new ProcessStartInfo(Environment.GetCommandLineArgs()[0])
                 {

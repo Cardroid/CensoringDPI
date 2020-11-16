@@ -100,7 +100,7 @@
     <Compile Include="Core\Model\RelayCommand.cs" />
     <Compile Include="Core\SaveLoadManager.cs" />
     <Compile Include="Core\TaskSchedulerManager.cs" />
-    <Compile Include="Utility\Checker.cs" />
+    <Compile Include="Utility\Check.cs" />
     <Compile Include="ViewModel\ArgumentViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ManualViewModel.cs" />

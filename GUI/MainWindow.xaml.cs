@@ -26,21 +26,20 @@ namespace GBDPIGUI
         public MainWindow()
         {
             InitializeComponent();
-            this.MouseUp += (s, e) =>
-            {
-                if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Released)
-                    Keyboard.ClearFocus();
-            };
+            if (Check.IsAdministrator()) this.Title = $"[Admin] {this.Title}";
 
-            this.Loaded += (s, e) => Load();
-            Application.Current.Exit += (s, e) => Save();
-            if (Checker.IsAdministrator()) this.Title = $"[Admin] {this.Title}";
+            this.Loaded += (s, e) =>
+            {
+                Load();
+                Application.Current.Exit += (s, e) => Save();
+
+                this.Visibility = Visibility.Collapsed;
+                TrayIcon.GetTrayIcon().IsIconEnabled = true;
+            };
 
 #if DEBUG
             #region TestCode
-            var gP = GlobalProperty.GetInstence();
-
-            gP.GoodByeDPIOptions.Path = @"DPIEXE\goodbyedpi.exe";
+            GoodByeDPIDotNet.GoodByeDPI.Path = @"DPIEXE\goodbyedpi.exe";
 
             GlobalProperty.GetInstence().Skin = HandyControl.Data.SkinType.Default;
             #endregion

@@ -5,15 +5,9 @@ namespace GoodByeDPIDotNet.Preset
 {
     public class ArgumentPreset
     {
-        private ArgumentPreset()
+        public static IGoodByeDPIOption GetPreset(PresetNum presetNum)
         {
-        }
-
-        public static IGoodByeDPIOptions GetPreset(IGoodByeDPIOptions options, PresetNum presetNum) => GetPreset(options.Path, options.IsAdmin, presetNum);
-
-        public static IGoodByeDPIOptions GetPreset(string goodByeDPIPath, bool isAdmin, PresetNum presetNum)
-        {
-            var result = new GoodByeDPIOptions(goodByeDPIPath, isAdmin);
+            var result = new GoodByeDPIOption();
 
             var presetManual = ArgumentManual.GetPresetManual();
 
@@ -31,11 +25,11 @@ namespace GoodByeDPIDotNet.Preset
                             result.AddArgument(args[i]);
                     }
 
+                    result.IsPreset = true;
                     return result;
                 }
             }
-            result.Clear();
-            return result;
+            return new GoodByeDPIOption();
         }
     }
 

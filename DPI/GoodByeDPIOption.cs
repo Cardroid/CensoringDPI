@@ -8,28 +8,21 @@ using GoodByeDPIDotNet.Manual;
 
 namespace GoodByeDPIDotNet
 {
-    public class GoodByeDPIOptions : IGoodByeDPIOptions
+    public class GoodByeDPIOption : IGoodByeDPIOption
     {
-        public GoodByeDPIOptions()
+        public GoodByeDPIOption() : this(false)
         {
-            this.ArgumentList = new Dictionary<string, string>();
-            this.IsAdmin = false;
-            this.IsPreset = false;
         }
 
-        public GoodByeDPIOptions(string path, bool isAdmin)
+        public GoodByeDPIOption(bool isPreset)
         {
             this.ArgumentList = new Dictionary<string, string>();
-            this.Path = path;
-            this.IsAdmin = isAdmin;
-            this.IsPreset = false;
+            this.IsPreset = isPreset;
         }
 
-        public GoodByeDPIOptions(GoodByeDPIOptions option)
+        public GoodByeDPIOption(GoodByeDPIOption option)
         {
             this.ArgumentList = option.ArgumentList;
-            this.Path = option.Path;
-            this.IsAdmin = option.IsAdmin;
             this.IsPreset = option.IsPreset;
         }
 
@@ -40,20 +33,6 @@ namespace GoodByeDPIDotNet
         private void OnArgumentChanged(bool isCleared) => ArgumentChangedEvent?.Invoke(this, new ArgumentChangedEventArgs(isCleared, IsPreset));
 
         public bool IsForceArgumentCheck { get; set; } = true;
-        public bool IsAdmin { get; set; }
-
-        private string _Path = "goodbyedpi.exe";
-        public string Path
-        {
-            get => _Path;
-            set
-            {
-                if (!value.EndsWith(".exe"))
-                    _Path = $"{value}.exe";
-                else
-                    _Path = value;
-            }
-        }
 
         private bool _IsPreset;
         public bool IsPreset

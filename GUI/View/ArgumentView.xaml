@@ -45,11 +45,16 @@
             Content="Argument"
             Grid.Row="1" />
 
-        <hc:ScrollViewer
-            HorizontalScrollBarVisibility="Visible"
-            Grid.Row="2">
-            <UserControl
-                Content="{Binding ArgumentViewItems}" />
-        </hc:ScrollViewer>
+        <ListBox>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

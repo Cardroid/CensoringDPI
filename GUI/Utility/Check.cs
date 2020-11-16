@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GBDPIGUI.Utility
 {
-    internal static class Checker
+    internal static class Check
     {
         internal static bool IsAdministrator()
         {

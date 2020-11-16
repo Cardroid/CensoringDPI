@@ -11,212 +11,222 @@ using GoodByeDPIDotNet.Interface;
 
 namespace GoodByeDPIDotNet
 {
-    public sealed class GoodByeDPI : INotifyPropertyChanged
+    public static class GoodByeDPI
     {
-        private GoodByeDPI()
-        {
-        }
+        private static Process GBDPI_Process = null;
+        private static string Arguments = string.Empty;
 
-        private static GoodByeDPI Instence;
+        public static Exception LastError { get; private set; } = new Exception();
 
-        public static GoodByeDPI GetInstence()
-        {
-            if (Instence == null)
-                Instence = new GoodByeDPI();
-            return Instence;
-        }
+        public static event PropertyChangedEventHandler RunStateChangedEvent;
 
-        private void Setup(string path, bool isAdmin)
-        {
-            ProcessStartInfo startInfo;
-            Process process;
-
-            if (isAdmin)
-                startInfo = new ProcessStartInfo(path)
-                {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    CreateNoWindow = true,
-                    Verb = "runas"
-                };
-            else
-                startInfo = new ProcessStartInfo(path)
-                {
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Hidden
-                };
-
-            process = new Process
-            {
-                EnableRaisingEvents = true,
-                StartInfo = startInfo
-            };
-
-            Dispose();
-            GBDPI_Process = process;
-
-            GBDPI_Process.Exited += ExitWatcher;
-        }
-
-        private Process GBDPI_Process;
-
-        private string _Path;
-        public string Path
-        {
-            get => _Path;
-            private set
-            {
-                _Path = value;
-                OnPropertyChanged("Path");
-            }
-        }
-
-        private bool _IsAdmin;
-        public bool IsAdmin
+        private static bool _IsAdmin = false;
+        public static bool IsAdmin
         {
             get => _IsAdmin;
-            private set
+            set
             {
-                _IsAdmin = value;
-                OnPropertyChanged("IsAdmin");
+                if (_IsAdmin != value)
+                {
+                    _IsAdmin = value;
+                    Dispose();
+                }
             }
         }
 
-        private bool _IsRun = false;
-        public bool IsRun
+        private static string _Path = "goodbyedpi.exe";
+        public static string Path
+        {
+            get => _Path;
+            set
+            {
+                try
+                {
+                    string _path = System.IO.Path.GetFullPath(value);
+                    if (!System.IO.Path.GetExtension(_path).EndsWith("exe") || !File.Exists(_path))
+                        throw new ArgumentException($"유효한 경로가 아닙니다.\n{Path}");
+
+                    _Path = _path;
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
+
+                Stop();
+            }
+        }
+
+        private static bool _IsRun = false;
+        public static bool IsRun
         {
             get => _IsRun && GBDPI_Process != null;
             private set
             {
-                if (GBDPI_Process == null)
-                    _IsRun = false;
-                else
+                if (_IsRun != value)
+                {
                     _IsRun = value;
-                OnPropertyChanged("IsRun");
+                    RunStateChangedEvent?.Invoke(null, new PropertyChangedEventArgs("IsRun"));
+                }
             }
         }
 
-        private void ExitWatcher(object sender, EventArgs args) => Dispose();
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-        public IGoodByeDPIOptions Options { get; private set; }
-
-        public GenericResult<string> Start() => Start(Options);
-
-        public GenericResult<string> Start(IGoodByeDPIOptions options)
+        private static void Setup()
         {
             if (IsRun)
-                return new GenericResult<string>(false, "이미 실행 중입니다.");
-
-            if (Checker.GoodByeDPIRunCheck())
-                return new GenericResult<string>(false, "프로세스가 이미 존재합니다.");
-
-            if (options == null)
-                return new GenericResult<string>(false, "유효한 설정값이 아닙니다.");
-
-            if (Options != options)
-                Options = options;
-
-            return Start(options.Path, options.GetArgument(), options.IsAdmin);
-        }
-
-        public GenericResult<string> Start(string path, string arg, bool isAdmin)
-        {
-            if (IsRun)
-                return new GenericResult<string>(false, "이미 실행 중입니다.");
-
-            if (Checker.GoodByeDPIRunCheck())
-                return new GenericResult<string>(false, "프로세스가 이미 존재합니다.");
-
-            try
             {
-                path = System.IO.Path.GetFullPath(path);
-                if (!System.IO.Path.GetExtension(path).EndsWith("exe") || !File.Exists(path))
-                    throw new ArgumentException();
-            }
-            catch
-            {
-                Dispose();
-                return new GenericResult<string>(false, $"유효한 경로가 아닙니다.\n{path}");
-            }
-
-            if (Path != path)
-            {
-                Dispose();
-                Path = path;
-            }
-
-            if (IsAdmin != isAdmin)
-            {
-                Dispose();
-                IsAdmin = isAdmin;
+                LastError = new InvalidOperationException("이미 실행 중입니다.");
+                return;
             }
 
             if (GBDPI_Process == null)
-                Setup(Path, IsAdmin);
+            {
+                ProcessStartInfo startInfo;
+                Process process;
+
+                if (IsAdmin)
+                {
+                    startInfo = new ProcessStartInfo(Path)
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        CreateNoWindow = true,
+                        //Verb = "runas",
+                    };
+                }
+                else
+                {
+                    startInfo = new ProcessStartInfo(Path)
+                    {
+                        UseShellExecute = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    };
+                }
+
+                process = new Process
+                {
+                    EnableRaisingEvents = true,
+                    StartInfo = startInfo
+                };
+
+                GBDPI_Process = process;
+                GBDPI_Process.Exited += ExitWatcher;
+            }
+            else if (Arguments != null)
+            {
+                GBDPI_Process.StartInfo.FileName = Path;
+                GBDPI_Process.StartInfo.Arguments = Arguments;
+            }
+        }
+
+        public static bool Start(IGoodByeDPIOption options)
+        {
+            if (options == null)
+                LastError = new ArgumentException("유효한 설정값이 아닙니다.");
+
+            var args = options.GetArgument();
+
+            if (Arguments != args)
+                Arguments = args;
+
+            return Start();
+        }
+
+        public static bool Start()
+        {
+            if (IsRun)
+            {
+                LastError = new InvalidOperationException("이미 실행 중입니다.");
+                return false;
+            }
+
+            if (Check.GoodByeDPIRunCheck())
+            {
+                LastError = new InvalidOperationException("프로세스가 이미 존재합니다.");
+                return false;
+            }
+
+            if (Arguments == null)
+                LastError = new ArgumentException("저장된 설정값이 없습니다.");
+
+            Setup();
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(arg))
-                    GBDPI_Process.StartInfo.Arguments = arg;
-                else
-                    arg = "Null";
                 Run();
             }
-            catch (Win32Exception e)
+            catch (Exception ex)
             {
-                Dispose();
-                return new GenericResult<string>(false, $"인수: {arg}\n{e.Message}");
-            }
-            catch (Exception e)
-            {
-                Dispose();
-                return new GenericResult<string>(false, $"인수: {arg}\n예외 발생: {e}");
+                Stop();
+                LastError = ex;
+                return false;
             }
 
-            return new GenericResult<string>(true, $"프로세스를 시작하였습니다.\n인수: {arg}");
+            return true;
         }
 
-        public GenericResult<string> Stop()
-        {
-            if (!IsRun)
-                return new GenericResult<string>(false, "실행 중인 프로세스가 없습니다.");
-
-            Dispose();
-            return new GenericResult<string>(true, "프로세스를 종료했습니다.");
-        }
-
-        private void Run()
+        private static bool Run()
         {
             try
             {
                 GBDPI_Process.Start();
                 IsRun = true;
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
-                Dispose();
-                throw;
+                LastError = ex;
+                Stop();
+                return false;
             }
         }
 
-        public void Kill()
+        public static bool Stop()
         {
+            if (!IsRun)
+            {
+                LastError = new InvalidOperationException("실행 중인 프로세스가 없습니다.");
+                return false;
+            }
+
             if (GBDPI_Process != null)
-                try { GBDPI_Process.Kill(); } catch { }
+            {
+                try
+                {
+                    GBDPI_Process.Kill();
+                }
+                catch
+                {
+                    Dispose();
+                    return false;
+                }
+            }
             IsRun = false;
+            return true;
         }
+        
+        private static void ExitWatcher(object sender, EventArgs args) => Stop();
 
-        public void Dispose()
+        public static void Dispose()
         {
-            Kill();
-
             if (GBDPI_Process != null)
+            {
+                try
+                {
+                    GBDPI_Process.Kill();
+                }
+                catch (Exception ex)
+                {
+                    LastError = ex;
+                }
+                
+                try { GBDPI_Process.Exited -= ExitWatcher; } catch { }
+
                 GBDPI_Process.Dispose();
-            GBDPI_Process = null;
+                GBDPI_Process = null;
+            }
+            IsRun = false;
         }
     }
 }

@@ -19,20 +19,18 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition
-                    Height="Auto" />
+                    Height="2*" />
                 <RowDefinition
-                    Height="Auto" />
+                    Height="7*" />
                 <RowDefinition
-                    Height="Auto" />
-                <RowDefinition
-                    Height="Auto" />
+                    Height="1*" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
             <StackPanel
                 Orientation="Horizontal"
                 HorizontalAlignment="Center"
-                Grid.Row="1">
+                Grid.Row="0">
                 <ToggleButton
                     Style="{StaticResource ToggleButtonSwitch}"
                     IsChecked="{Binding IsExecuteGoodByeDPI}" />
@@ -42,22 +40,14 @@
                     Content="실행" />
             </StackPanel>
 
-            <StackPanel
-                Orientation="Horizontal"
-                HorizontalAlignment="Center"
-                Grid.Row="2">
-                <ToggleButton
-                    Style="{StaticResource ToggleButtonSwitch}"
-                    IsChecked="{Binding IsTrayIconEnabled}" />
-                <Label
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Content="트레이 아이콘 테스트" />
-            </StackPanel>
-            
             <Label
                 Content="{Binding Status}"
-                Grid.Row="3" />
+                Grid.Row="1" />
+
+            <Button
+                Content="종료"
+                Grid.Row="2"
+                Command="{Binding ExitCommand}"/>
         </Grid>
     </hc:ScrollViewer>
 </UserControl>

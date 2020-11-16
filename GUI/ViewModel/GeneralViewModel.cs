@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using GBDPIGUI.Core;
 using GBDPIGUI.Core.Model;
@@ -14,6 +15,7 @@ namespace GBDPIGUI.ViewModel
     {
         public GeneralViewModel()
         {
+            ExitCommand = new RelayCommand(_ExitCommand);
         }
 
         #region IsExecuteGoodByeDPI
@@ -45,10 +47,9 @@ namespace GBDPIGUI.ViewModel
         }
         #endregion
 
-        public bool IsTrayIconEnabled
-        {
-            get => TrayIcon.GetTrayIcon().IsIconEnabled;
-            set => TrayIcon.GetTrayIcon().IsIconEnabled = value;
-        }
+        #region Exit
+        public RelayCommand ExitCommand { get; }
+        private void _ExitCommand(object o) => Application.Current.Shutdown();
+        #endregion
     }
 }

@@ -21,17 +21,6 @@ namespace GBDPIGUI.View
         public TrayIcon()
         {
             InitializeComponent();
-            NotifyIconContextContent.Token = nameof(TrayIcon);
-
-            NotifyIconContextContent.MouseDoubleClick += NotifyIconContextContent_MouseDoubleClick;
-        }
-
-        private void NotifyIconContextContent_MouseDoubleClick(object sender, RoutedEventArgs e)
-        {
-            var mainWindow = ((MainWindow)App.Current.MainWindow);
-            mainWindow.Visibility = Visibility.Visible;
-            mainWindow.WindowState = WindowState.Normal;
-            mainWindow.Activate();
         }
 
         public static TrayIcon GetTrayIcon() => ((MainWindow)App.Current.MainWindow)._Tray;

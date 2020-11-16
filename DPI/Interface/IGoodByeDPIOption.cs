@@ -1,9 +1,7 @@
 ﻿namespace GoodByeDPIDotNet.Interface
 {
-    public interface IGoodByeDPIOptions
+    public interface IGoodByeDPIOption
     {
-        string Path { get; }
-        bool IsAdmin { get; }
-        string GetArgument();
+        public string GetArgument();
     }
 }

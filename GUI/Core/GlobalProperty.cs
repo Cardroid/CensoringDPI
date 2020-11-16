@@ -25,9 +25,6 @@ namespace GBDPIGUI.Core
     {
         private GlobalProperty()
         {
-            GoodByeDPI = GoodByeDPI.GetInstence();
-            GoodByeDPIOptionsHelper = new GoodByeDPIOptionsHelper(new GoodByeDPIOptions());
-            GoodByeDPIOptionsHelper.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
             Application.Current.Exit += (s, e) => GoodByeDPI.Stop();
         }
 
@@ -43,9 +40,7 @@ namespace GBDPIGUI.Core
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public GoodByeDPI GoodByeDPI { get; }
-        internal GoodByeDPIOptionsHelper GoodByeDPIOptionsHelper { get; }
-        public GoodByeDPIOptions GoodByeDPIOptions => GoodByeDPIOptionsHelper.GoodByeDPIOptions;
+        public GoodByeDPIOptionsHelper GoodByeDPIOptionsHelper { get; }
 
         private SkinType _Skin = SkinType.Default;
         /// <summary>
@@ -75,6 +70,21 @@ namespace GBDPIGUI.Core
             {
                 _CustomArgument = value;
                 OnPropertyChanged("CustomArgument");
+            }
+        }
+
+        private int _SelectPresetIndex = 2;
+        /// <summary>
+        /// 선택한 프리셋
+        /// </summary>
+        [JsonProperty]
+        public int SelectPresetIndex
+        {
+            get => _SelectPresetIndex;
+            set
+            {
+                _SelectPresetIndex = value;
+                OnPropertyChanged("SelectPresetIndex");
             }
         }
     }

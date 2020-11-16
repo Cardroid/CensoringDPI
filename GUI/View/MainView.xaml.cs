@@ -20,6 +20,12 @@ namespace GBDPIGUI.View
         public MainView()
         {
             InitializeComponent();
+
+            this.MouseUp += (s, e) =>
+            {
+                if (e.ChangedButton == MouseButton.Left && e.LeftButton == MouseButtonState.Released)
+                    Keyboard.ClearFocus();
+            };
         }
     }
 }

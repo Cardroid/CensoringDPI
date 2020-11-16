@@ -16,7 +16,7 @@ namespace UnitTest.GoodByeDPIOptionTest
         [TestMethod]
         public void ArgParser()
         {
-            GoodByeDPIOptions option = new GoodByeDPIOptions("", Checker.IsAdministrator());
+            GoodByeDPIOption option = new GoodByeDPIOption("", Checker.IsAdministrator());
 
             option.AddArgument("-w");
             Assert.IsTrue(option.ContainsArgument("-w"), "Existence Test \"-w\"");
@@ -44,7 +44,7 @@ namespace UnitTest.GoodByeDPIOptionTest
         [TestMethod]
         public void ArgSpeedandClear()
         {
-            GoodByeDPIOptions option = new GoodByeDPIOptions("", Checker.IsAdministrator());
+            GoodByeDPIOption option = new GoodByeDPIOption("", Checker.IsAdministrator());
 
             int max = 10000;
             for (int i = 0; i < max; i++)
@@ -58,16 +58,16 @@ namespace UnitTest.GoodByeDPIOptionTest
         [TestMethod]
         public void ArgPresetGetter()
         {
-            Assert.IsTrue(((GoodByeDPIOptions)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Default)).ContainsArgument("1"), "1");
-            Assert.IsTrue(((GoodByeDPIOptions)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Compatible_Better_Speed_HTTPS)).ContainsArgument("2"), "2");
-            Assert.IsTrue(((GoodByeDPIOptions)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Better_Speed_HTTP_HTTPS)).ContainsArgument("3"), "3");
-            Assert.IsTrue(((GoodByeDPIOptions)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Best_Speed)).ContainsArgument("4"), "4");
+            Assert.IsTrue(((GoodByeDPIOption)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Default)).ContainsArgument("1"), "1");
+            Assert.IsTrue(((GoodByeDPIOption)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Compatible_Better_Speed_HTTPS)).ContainsArgument("2"), "2");
+            Assert.IsTrue(((GoodByeDPIOption)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Better_Speed_HTTP_HTTPS)).ContainsArgument("3"), "3");
+            Assert.IsTrue(((GoodByeDPIOption)ArgumentPreset.GetPreset("", Checker.IsAdministrator(), PresetNum.Best_Speed)).ContainsArgument("4"), "4");
         }
 
         [TestMethod]
         public void ArgGetter()
         {
-            GoodByeDPIOptions option = new GoodByeDPIOptions("", Checker.IsAdministrator());
+            GoodByeDPIOption option = new GoodByeDPIOption("", Checker.IsAdministrator());
 
             option.AddArgument("-w");
             option.AddArgument("hello");

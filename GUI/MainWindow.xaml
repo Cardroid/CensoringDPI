@@ -8,12 +8,8 @@
     xmlns:view="clr-namespace:GBDPIGUI.View"
     mc:Ignorable="d"
     Title="CensoringDPI V2"
-    Height="600"
-    Width="400">
+    Icon="pack://application:,,,/CensoringDPI;component/icon.ico">
 
-    <Grid>
-        <view:TrayIcon
-            x:Name="_Tray" />
-        <view:MainView />
-    </Grid>
+    <view:TrayIcon
+        x:Name="_Tray" />
 </hc:Window>

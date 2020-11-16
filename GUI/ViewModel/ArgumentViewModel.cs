@@ -12,6 +12,7 @@ using GBDPIGUI.Core;
 using GBDPIGUI.Core.Model;
 using GBDPIGUI.View;
 
+using GoodByeDPIDotNet;
 using GoodByeDPIDotNet.Manual;
 using GoodByeDPIDotNet.Preset;
 
@@ -34,24 +35,30 @@ namespace GBDPIGUI.ViewModel
                 new ComboBoxItem { Content = "Custom Preset", Tag = "" },
             };
 
-            GlobalProperty.GetInstence().GoodByeDPI.PropertyChanged += GoodByeDPI_PropertyChanged;
-            SelectPresetIndex = 2;
+            GlobalProperty.GetInstence().PropertyChanged += PropertyChangedGetter;
+            GoodByeDPI.RunStateChangedEvent += PropertyChangedGetter;
         }
 
         ~ArgumentViewModel()
         {
-            GlobalProperty.GetInstence().GoodByeDPI.PropertyChanged -= GoodByeDPI_PropertyChanged;
+            GlobalProperty.GetInstence().PropertyChanged -= PropertyChangedGetter;
+            GoodByeDPI.RunStateChangedEvent -= PropertyChangedGetter;
         }
 
-        private void GoodByeDPI_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void PropertyChangedGetter(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsRun")
-                IsPresetComboBoxEnabled = !GlobalProperty.GetInstence().GoodByeDPI.IsRun;
+                IsPresetComboBoxEnabled = !GoodByeDPI.IsRun;
+            if (e.PropertyName == "SelectPresetIndex")
+            {
+                SelectPresetIndexRefresh();
+                OnPropertyChanged("SelectPresetIndex");
+            }
         }
 
         public StackPanel ArgumentViewItems { get; }
 
-        private bool _IsPresetComboBoxEnabled = !GlobalProperty.GetInstence().GoodByeDPI.IsRun;
+        private bool _IsPresetComboBoxEnabled = !GoodByeDPI.IsRun;
         public bool IsPresetComboBoxEnabled
         {
             get => _IsPresetComboBoxEnabled;
@@ -75,14 +82,13 @@ namespace GBDPIGUI.ViewModel
 
         public IList<ComboBoxItem> PresetList { get; set; }
 
-        private int _SelectPresetIndex;
         public int SelectPresetIndex
         {
-            get => _SelectPresetIndex;
+            get => GlobalProperty.GetInstence().SelectPresetIndex;
             set
             {
-                _SelectPresetIndex = value;
-                Debug.WriteLine($"SelectPresetIndex: {_SelectPresetIndex}");
+                GlobalProperty.GetInstence().SelectPresetIndex = value;
+                Debug.WriteLine($"SelectPresetIndex: {GlobalProperty.GetInstence().SelectPresetIndex}");
                 SelectPresetIndexRefresh();
                 OnPropertyChanged("SelectPresetIndex");
             }
@@ -95,7 +101,7 @@ namespace GBDPIGUI.ViewModel
             {
                 var presetManual = ArgumentManual.GetPresetManual();
 
-                optionhelper.GoodByeDPIOptions.Clear();
+                GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.Clear();
                 switch (presetNum)
                 {
                     case PresetNum.Default:
@@ -115,15 +121,15 @@ namespace GBDPIGUI.ViewModel
                         PresetDescript = $"인수 집합: {presetManual["-4"].Item1}\n{presetManual["-4"].Item2}";
                         break;
                 }
-                if (!optionhelper.GoodByeDPIOptions.IsPreset)
-                    optionhelper.GoodByeDPIOptions.IsPreset = true;
+                if (!GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset)
+                    GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset = true;
             }
             else
             {
                 PresetDescript = "커스텀 프리셋";
 
-                if (optionhelper.GoodByeDPIOptions.IsPreset)
-                    optionhelper.GoodByeDPIOptions.IsPreset = false;
+                if (GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset)
+                    GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset = false;
             }
         }
     }

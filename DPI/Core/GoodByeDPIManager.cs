@@ -2,7 +2,7 @@
 
 namespace GoodByeDPIDotNet.Core
 {
-    public static class Checker
+    internal static class Check
     {
         internal static bool GoodByeDPIRunCheck() => Process.GetProcessesByName("goodbyedpi").Length > 0;
     }

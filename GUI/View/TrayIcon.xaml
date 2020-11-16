@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:vm="clr-namespace:GBDPIGUI.ViewModel"
+    xmlns:view="clr-namespace:GBDPIGUI.View"
     mc:Ignorable="d"
     d:DesignHeight="450"
     d:DesignWidth="800">
@@ -17,35 +18,14 @@
     <hc:NotifyIcon
         x:FieldModifier="private"
         x:Name="NotifyIconContextContent"
-        Visibility="Collapsed"
         Text="CensoringDPI"
         Icon="pack://application:,,,/CensoringDPI;component/icon.ico">
         <hc:NotifyIcon.ContextContent>
-            <Border
-                CornerRadius="4"
-                Margin="10">
-                <StackPanel
-                    VerticalAlignment="Center"
-                    Margin="16">
-                    <Image
-                        Width="100"
-                        Height="100"
-                        Source="pack://application:,,,/CensoringDPI;component/icon.ico"/>
-                </StackPanel>
-            </Border>
+            <Grid
+                Margin="5"
+                Background="{DynamicResource BackgroundBrush}">
+                <view:MainView />
+            </Grid>
         </hc:NotifyIcon.ContextContent>
-        <!--<hc:Interaction.Triggers>
-            <hc:EventTrigger
-                EventName="Click">
-                <hc:EventToCommand
-                    Command="hc:ControlCommands.PushMainWindow2Top" />
-            </hc:EventTrigger>
-            <hc:EventTrigger
-                EventName="MouseDoubleClick">
-                <hc:EventToCommand
-                    Command="{Binding MouseCmd}"
-                    CommandParameter="MouseDoubleClick" />
-            </hc:EventTrigger>
-        </hc:Interaction.Triggers>-->
     </hc:NotifyIcon>
 </UserControl>
