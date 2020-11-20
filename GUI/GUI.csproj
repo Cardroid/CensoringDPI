@@ -96,7 +96,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\HotKey.cs" />
-    <Compile Include="Core\Model\GoodByeDPIOptionsHelper.cs" />
+    <Compile Include="Core\GoodByeDPIOptionsHelper.cs" />
+    <Compile Include="Core\Model\OptionChangedEventArgs.cs" />
+    <Compile Include="Core\Model\OptionHelper.cs" />
     <Compile Include="Core\Model\RelayCommand.cs" />
     <Compile Include="Core\SaveLoadManager.cs" />
     <Compile Include="Core\TaskSchedulerManager.cs" />

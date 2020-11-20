@@ -8,6 +8,7 @@ using System.Windows;
 using GBDPIGUI.Core;
 using GBDPIGUI.Core.Model;
 using GBDPIGUI.View;
+using GoodByeDPIDotNet;
 
 namespace GBDPIGUI.ViewModel
 {
@@ -21,14 +22,19 @@ namespace GBDPIGUI.ViewModel
         #region IsExecuteGoodByeDPI
         public bool IsExecuteGoodByeDPI
         {
-            get => GlobalProperty.GetInstence().GoodByeDPI.IsRun;
+            get => GoodByeDPI.IsRun;
             set
             {
-                var gP = GlobalProperty.GetInstence();
                 if (value)
-                    Status = gP.GoodByeDPI.Start(gP.GoodByeDPIOptions).Result;
+                {
+                    GoodByeDPI.Start();
+                    Status = $"시작되었습니다.\n{GoodByeDPI.Arguments}";
+                }
                 else
-                    Status = gP.GoodByeDPI.Stop().Result;
+                {
+                    GoodByeDPI.Stop();
+                    Status = $"종료되었습니다.\n{GoodByeDPI.Arguments}";
+                }
                 OnPropertyChanged("IsExecuteGoodByeDPI");
             }
         }

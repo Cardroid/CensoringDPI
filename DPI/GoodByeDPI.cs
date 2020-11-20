@@ -14,7 +14,7 @@ namespace GoodByeDPIDotNet
     public static class GoodByeDPI
     {
         private static Process GBDPI_Process = null;
-        private static string Arguments = string.Empty;
+        public static string Arguments { get; private set; } = string.Empty;
 
         public static Exception LastError { get; private set; } = new Exception();
 

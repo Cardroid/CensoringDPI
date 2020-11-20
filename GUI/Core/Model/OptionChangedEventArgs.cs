@@ -8,14 +8,14 @@ namespace GoodByeDPIDotNet.Core
 {
     public class OptionChangedEventArgs : EventArgs
     {
-        public OptionChangedEventArgs(string name, OptionChangedState state, IGoodByeDPIOption option)
+        public OptionChangedEventArgs(string key, OptionChangedState state, IGoodByeDPIOption option)
         {
-            this.Name = name;
+            this.Key = key;
             this.State = state;
             this.Option = option;
         }
 
-        public string Name { get; }
+        public string Key { get; }
         public OptionChangedState State { get; }
         public IGoodByeDPIOption Option { get; }
     }

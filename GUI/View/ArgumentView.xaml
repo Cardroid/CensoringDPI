@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:hc="https://handyorg.github.io/handycontrol"
     xmlns:vm="clr-namespace:GBDPIGUI.ViewModel"
+    xmlns:view="clr-namespace:GBDPIGUI.View"
     IsEnabled="{Binding IsEditEnabled}"
     mc:Ignorable="d"
     d:DesignHeight="450"
@@ -15,8 +16,20 @@
         <vm:ArgumentViewModel />
     </UserControl.DataContext>
 
+    <UserControl.Resources>
+        <DataTemplate
+            x:Key="ArgumentControlTemplate">
+            <view:ArgumentListViewItem 
+                Argument="{Binding Item1}"
+                IsNeedArgumentValue="{Binding Item2}"
+                Informaion="{Binding Item3}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
             <RowDefinition
                 Height="Auto" />
             <RowDefinition
@@ -33,11 +46,12 @@
                 ItemsSource="{Binding PresetList}"
                 IsEnabled="{Binding IsPresetComboBoxEnabled}" />
             <TextBlock
+                HorizontalAlignment="Left"
                 Style="{StaticResource TextBlockDefaultInfo}"
                 Text="{Binding PresetDescript}"
                 Margin="0,5,0,0" />
         </StackPanel>
-        
+
         <hc:Divider
             Margin="0"
             HorizontalContentAlignment="Left"
@@ -45,16 +59,9 @@
             Content="Argument"
             Grid.Row="1" />
 
-        <ListBox>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <ListBox
+            ItemsSource="{Binding Manual}"
+            ItemTemplate="{DynamicResource ArgumentControlTemplate}"
+            Grid.Row="3" />
     </Grid>
 </UserControl>

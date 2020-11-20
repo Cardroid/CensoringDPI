@@ -10,6 +10,9 @@
     Title="CensoringDPI V2"
     Icon="pack://application:,,,/CensoringDPI;component/icon.ico">
 
-    <view:TrayIcon
-        x:Name="_Tray" />
+    <Grid>
+        <view:TrayIcon
+            x:Name="_Tray" />
+        <view:MainView />
+    </Grid>
 </hc:Window>

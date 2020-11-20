@@ -22,115 +22,12 @@ namespace GBDPIGUI.ViewModel
     {
         public ArgumentViewModel()
         {
-            ArgumentViewItems = new StackPanel();
-            foreach (var arg in ArgumentManual.GetArgumentManual())
-                ArgumentViewItems.Children.Add(new ArgumentListViewItem(arg.Key, arg.Value.Item2, arg.Value.Item1));
-
-            PresetList = new List<ComboBoxItem>
-            {
-                new ComboBoxItem { Content = "Default", Tag = PresetNum.Default },
-                new ComboBoxItem { Content = "Compatible Better Speed HTTPS", Tag = PresetNum.Compatible_Better_Speed_HTTPS },
-                new ComboBoxItem { Content = "Better Speed HTTP HTTPS", Tag = PresetNum.Better_Speed_HTTP_HTTPS },
-                new ComboBoxItem { Content = "Best Speed", Tag = PresetNum.Best_Speed },
-                new ComboBoxItem { Content = "Custom Preset", Tag = "" },
-            };
-
-            GlobalProperty.GetInstence().PropertyChanged += PropertyChangedGetter;
-            GoodByeDPI.RunStateChangedEvent += PropertyChangedGetter;
+            Manual = new List<Tuple<string, bool, string>>();
+            foreach (var item in ArgumentManual.GetArgumentManual())
+                Manual.Add(new Tuple<string, bool, string>(item.Key, item.Value.Item1, item.Value.Item2));
         }
 
-        ~ArgumentViewModel()
-        {
-            GlobalProperty.GetInstence().PropertyChanged -= PropertyChangedGetter;
-            GoodByeDPI.RunStateChangedEvent -= PropertyChangedGetter;
-        }
-
-        private void PropertyChangedGetter(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "IsRun")
-                IsPresetComboBoxEnabled = !GoodByeDPI.IsRun;
-            if (e.PropertyName == "SelectPresetIndex")
-            {
-                SelectPresetIndexRefresh();
-                OnPropertyChanged("SelectPresetIndex");
-            }
-        }
-
-        public StackPanel ArgumentViewItems { get; }
-
-        private bool _IsPresetComboBoxEnabled = !GoodByeDPI.IsRun;
-        public bool IsPresetComboBoxEnabled
-        {
-            get => _IsPresetComboBoxEnabled;
-            set
-            {
-                _IsPresetComboBoxEnabled = value;
-                OnPropertyChanged("IsPresetComboBoxEnabled");
-            }
-        }
-
-        private string _PresetDescript;
-        public string PresetDescript
-        {
-            get => _PresetDescript;
-            set
-            {
-                _PresetDescript = value;
-                OnPropertyChanged("PresetDescript");
-            }
-        }
-
-        public IList<ComboBoxItem> PresetList { get; set; }
-
-        public int SelectPresetIndex
-        {
-            get => GlobalProperty.GetInstence().SelectPresetIndex;
-            set
-            {
-                GlobalProperty.GetInstence().SelectPresetIndex = value;
-                Debug.WriteLine($"SelectPresetIndex: {GlobalProperty.GetInstence().SelectPresetIndex}");
-                SelectPresetIndexRefresh();
-                OnPropertyChanged("SelectPresetIndex");
-            }
-        }
-
-        private void SelectPresetIndexRefresh()
-        {
-            var optionhelper = GlobalProperty.GetInstence().GoodByeDPIOptionsHelper;
-            if (PresetList[SelectPresetIndex].Tag is PresetNum presetNum)
-            {
-                var presetManual = ArgumentManual.GetPresetManual();
-
-                GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.Clear();
-                switch (presetNum)
-                {
-                    case PresetNum.Default:
-                        optionhelper.ArgumentParser(presetManual["-1"].Item1);
-                        PresetDescript = $"인수 집합: {presetManual["-1"].Item1}\n{presetManual["-1"].Item2}";
-                        break;
-                    case PresetNum.Compatible_Better_Speed_HTTPS:
-                        optionhelper.ArgumentParser(presetManual["-2"].Item1);
-                        PresetDescript = $"인수 집합: {presetManual["-2"].Item1}\n{presetManual["-2"].Item2}";
-                        break;
-                    case PresetNum.Better_Speed_HTTP_HTTPS:
-                        optionhelper.ArgumentParser(presetManual["-3"].Item1);
-                        PresetDescript = $"인수 집합: {presetManual["-3"].Item1}\n{presetManual["-3"].Item2}";
-                        break;
-                    case PresetNum.Best_Speed:
-                        optionhelper.ArgumentParser(presetManual["-4"].Item1);
-                        PresetDescript = $"인수 집합: {presetManual["-4"].Item1}\n{presetManual["-4"].Item2}";
-                        break;
-                }
-                if (!GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset)
-                    GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset = true;
-            }
-            else
-            {
-                PresetDescript = "커스텀 프리셋";
-
-                if (GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset)
-                    GlobalProperty.GetInstence().GoodByeDPIOptionsHelper.Options.IsPreset = false;
-            }
-        }
+        //public OptionsHelper Options => GoodByeDPIOptionsHelper.GetInstence().Options;
+        public List<Tuple<string, bool, string>> Manual { get; }
     }
 }

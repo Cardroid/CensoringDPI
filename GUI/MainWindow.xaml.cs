@@ -17,8 +17,6 @@ using GBDPIGUI.Core;
 using GBDPIGUI.Utility;
 using GBDPIGUI.View;
 
-using HandyControl.Controls;
-
 namespace GBDPIGUI
 {
     public partial class MainWindow : HandyControl.Controls.Window
@@ -33,13 +31,14 @@ namespace GBDPIGUI
                 Load();
                 Application.Current.Exit += (s, e) => Save();
 
-                this.Visibility = Visibility.Collapsed;
+                //this.Visibility = Visibility.Collapsed;
                 TrayIcon.GetTrayIcon().IsIconEnabled = true;
             };
 
 #if DEBUG
             #region TestCode
             GoodByeDPIDotNet.GoodByeDPI.Path = @"DPIEXE\goodbyedpi.exe";
+            GoodByeDPIDotNet.GoodByeDPI.IsAdmin = Check.IsAdministrator();
 
             GlobalProperty.GetInstence().Skin = HandyControl.Data.SkinType.Default;
             #endregion
@@ -51,13 +50,13 @@ namespace GBDPIGUI
         private void Save()
         {
             SaveLoadManager.Save(Path.Combine(directory, "Option.json"), GlobalProperty.GetInstence());
-            SaveLoadManager.Save(Path.Combine(directory, "Argument.json"), GlobalProperty.GetInstence().GoodByeDPIOptionsHelper);
+            SaveLoadManager.Save(Path.Combine(directory, "Argument.json"), GoodByeDPIOptionsHelper.GetInstence());
         }
 
         private void Load()
         {
             SaveLoadManager.Load(Path.Combine(directory, "Option.json"), GlobalProperty.GetInstence());
-            SaveLoadManager.Load(Path.Combine(directory, "Argument.json"), GlobalProperty.GetInstence().GoodByeDPIOptionsHelper);
+            SaveLoadManager.Load(Path.Combine(directory, "Argument.json"), GoodByeDPIOptionsHelper.GetInstence());
         }
     }
 }

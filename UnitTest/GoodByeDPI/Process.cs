@@ -21,25 +21,23 @@ namespace UnitTest.GoodByeDPI
         [TestMethod]
         public void ProcessRun()
         {
-            var GBDPI = GoodByeDPIDotNet.GoodByeDPI.GetInstence();
-
+            GoodByeDPIDotNet.GoodByeDPI.Path = @"DPIEXE\goodbyedpi.exe";
+            GoodByeDPIDotNet.GoodByeDPI.IsAdmin = Checker.IsAdministrator();
             var total = true;
 
-            total &= !GBDPI.IsRun;
+            total &= !GoodByeDPIDotNet.GoodByeDPI.IsRun;
 
-            var runResult = GBDPI.Start(ArgumentPreset.GetPreset(@"DPIEXE\goodbyedpi.exe", Checker.IsAdministrator(), PresetNum.Better_Speed_HTTP_HTTPS));
+            total &= GoodByeDPIDotNet.GoodByeDPI.Start(ArgumentPreset.GetPreset(PresetNum.Better_Speed_HTTP_HTTPS));
 
-            Trace.WriteLine(runResult.Result);
-            total &= runResult.Success;
+            Trace.WriteLine(GoodByeDPIDotNet.GoodByeDPI.LastError);
 
-            total &= GBDPI.IsRun;
+            total &= GoodByeDPIDotNet.GoodByeDPI.IsRun;
 
-            var endResult = GBDPI.Stop();
+            total &= GoodByeDPIDotNet.GoodByeDPI.Stop();
 
-            Trace.WriteLine(endResult.Result);
-            total &= endResult.Success;
+            Trace.WriteLine(GoodByeDPIDotNet.GoodByeDPI.LastError);
 
-            GBDPI.Kill();
+            total &= GoodByeDPIDotNet.GoodByeDPI.IsRun;
 
             Assert.IsTrue(total);
         }

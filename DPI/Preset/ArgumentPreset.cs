@@ -5,7 +5,7 @@ namespace GoodByeDPIDotNet.Preset
 {
     public class ArgumentPreset
     {
-        public static IGoodByeDPIOption GetPreset(PresetNum presetNum)
+        public static GoodByeDPIOption GetPreset(PresetNum presetNum)
         {
             var result = new GoodByeDPIOption();
 

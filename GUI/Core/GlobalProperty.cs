@@ -40,8 +40,6 @@ namespace GBDPIGUI.Core
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public GoodByeDPIOptionsHelper GoodByeDPIOptionsHelper { get; }
-
         private SkinType _Skin = SkinType.Default;
         /// <summary>
         /// 스킨 타입
