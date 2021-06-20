@@ -11,7 +11,7 @@
   </a>
     <br />
     
-A program to censor censorship
+GoodbyeDPI Wrapper
 
 ### [GoodbyeDPI](https://github.com/ValdikSS/GoodbyeDPI)의 레퍼입니다.
 
