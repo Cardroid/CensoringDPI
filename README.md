@@ -13,7 +13,7 @@
     
 A program to censor censorship
 
-### 검열을 검열하는 프로그램
+### [GoodbyeDPI](https://github.com/ValdikSS/GoodbyeDPI)의 레퍼입니다.
 
 ## 다운로드는 [여기](https://github.com/Cardroid/CensoringDPI/releases/latest)를 확인하세요
 
